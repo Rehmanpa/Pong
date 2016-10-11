@@ -9,6 +9,7 @@ public class SinglePlayerAIPongPanel extends JPanel {
 
     static void gg() {
         System.out.println("This is an update test");
+        System.out.println("What a dank meme");
     }
 
 }
