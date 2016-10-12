@@ -16,7 +16,7 @@ import static java.awt.event.KeyEvent.VK_W;
 public class LocalMultiplayer extends JPanel implements ActionListener, KeyListener{
 
     //Ball stuff and the speed the paddles move
-    private int ballSpeed = 100;
+    private int ballSpeed = 200;
     private int ballX = 250;
     private int ballY = 250;
     private int diameter = 20;
@@ -30,9 +30,17 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
     private int playerOneWidth = 10;
     private int playerOneHeight = 50;
 
-    //Booleans
+    //Player 2 stuff
+    private int playerTwoX = 465;
+    private int playerTwoY = 250;
+    private int playerTwoWidth = 10;
+    private int playerTwoHeight = 50;
+
+    //Booleans for game states and keys being pressed
     private boolean wPressed = false;
     private boolean sPressed = false;
+    private boolean upPressed = false;
+    private boolean downPressed = false;
 
     //Constructs the class panel
     public LocalMultiplayer() {
@@ -51,6 +59,7 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
     }
     //This manages movement and collisions
     public void movement() {
+        //Player 1 paddle movement:
         //This means that if the w key is pressed that the paddle will move up
         if (wPressed) { //Apparently wPressed == true is the same thing as wPressed
             if (playerOneY - paddleSpeed > 0) {
@@ -63,6 +72,17 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
                 playerOneY += paddleSpeed;
             }
         }
+        //Player 2 paddle movement:
+        if (upPressed) {
+            if (playerTwoY - paddleSpeed > 0) {
+                playerTwoY -= paddleSpeed;
+            }
+        }
+        if (downPressed) {
+            if (playerTwoY + paddleSpeed + playerTwoHeight < getHeight()) {
+                playerTwoY += paddleSpeed;
+            }
+        }
 
         //This should determine where the ball goes after it moves
         int nextBallLeft = ballX + ballDeltaX;
@@ -70,18 +90,23 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
         int nextBallTop = ballY + ballDeltaY;
         int nextBallBottom = ballY + ballDeltaY + diameter;
 
+        //values for player one
         int playerOneRight = playerOneX + playerOneWidth;
         int playerOneTop = playerOneY;
         int playerOneBottom = playerOneY + playerOneHeight;
 
-        //This is when the ball bounces off the top of the screen
+        //values for player two
+        double playerTwoLeft = playerTwoX;
+        double playerTwoTop = playerTwoY;
+        double playerTwoBottom = playerTwoY + playerTwoHeight;
+
+        //This is when the ball bounces off the top/bottom of the screen
         if (nextBallTop < 0 || nextBallBottom > getHeight()) {
             ballDeltaY *= -1;
         }
-
+        //If the ball misses the first players paddle this this will trigger player 2 victory,
+        //also moves the ball to the left side
         if (nextBallLeft < playerOneRight) {
-            //If the ball misses the first players paddle this this will trigger player 2 victory,
-            //also moves the ball to the left side
             if (nextBallTop > playerOneBottom || nextBallBottom < playerOneTop) {
                 System.out.println("This is here to show that player 2 ended up winning");
                 ballX = 250;
@@ -91,23 +116,31 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
             }
         }
         //When the ball goes off to the right
-        if (nextBallRight > getWidth()) {
-            ballDeltaX*=-1;
+        if (nextBallRight > playerTwoLeft) {
+            //moves ball
+            if (nextBallTop > playerTwoBottom || nextBallBottom < playerTwoTop) {
+                System.out.println("This is here to show that player 1 ended up winning");
+                ballX = 250;
+                ballY = 250;
+            }
+            else {
+                ballDeltaX *= -1;
+            }
         }
         //This moves the ball
         ballX += ballDeltaX;
         ballY += ballDeltaY;
-
+        //This repaints the JPanel so that it updates when the ball is moved/redrawn
         repaint();
     }
 
     //this is the paint method for painting everything
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.white);
-
+        g.setColor(Color.white); //sets colors
         g.fillOval(ballX, ballY, diameter, diameter); //draws the ball
         g.fillRect(playerOneX, playerOneY, playerOneWidth, playerOneHeight); //draws the player 1 paddle
+        g.fillRect(playerTwoX, playerTwoY, playerTwoWidth, playerTwoHeight); //draws the player 2 paddle
     }
 
     public void keyTyped(KeyEvent e) {}
@@ -117,6 +150,11 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
             wPressed = true;
         } else if (e.getKeyCode() == VK_S) {
             sPressed = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            upPressed = true;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            downPressed = true;
         }
     }
 
@@ -125,6 +163,11 @@ public class LocalMultiplayer extends JPanel implements ActionListener, KeyListe
             wPressed = false;
         } else if (e.getKeyCode() == VK_S) {
             sPressed = false;
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            upPressed = false;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            downPressed = false;
         }
     }
 }
