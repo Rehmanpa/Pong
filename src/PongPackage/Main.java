@@ -2,7 +2,6 @@ package PongPackage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class Main {
     static int whichProgramToStart; //This int tells the PSVM which program to start
@@ -28,11 +27,9 @@ public class Main {
             if (n == 0) {
                 //What happens if they chose the online option?
                 whichProgramToStart=1;
-                System.out.println("Player is playing online multiplayer");
             } else if (n == 1) {
                 //What happens if they chose local option?
                 whichProgramToStart=2;
-                System.out.println("Player is playing locally");
             } else if (n == 2) {
                 int zz = JOptionPane.showConfirmDialog(choice, "Are you sure you want to quit?");
                 if (zz == 0) {
@@ -46,7 +43,6 @@ public class Main {
         //Starts the SinglePlayer with AI
         else if (z == 0) {
             whichProgramToStart=0;
-            System.out.println("Player is playing with AI");
         }
         //Gives the user 1 last option to not quit the game before doing so
         else {
@@ -63,7 +59,6 @@ public class Main {
     public static void main(String[] args) {
         //Starts the choice class
         choice();
-
         //This runs the single player mode
         if (whichProgramToStart == 0) {
 
